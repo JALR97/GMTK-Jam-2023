@@ -1,11 +1,8 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Security;
 using Unity.Mathematics;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.Splines;
+using UnityEngine.UIElements;
 
 [ExecuteInEditMode()]
 public class SplineSampler : MonoBehaviour
@@ -13,9 +10,7 @@ public class SplineSampler : MonoBehaviour
     //**    ---Components---    **//
     //  [[ set in editor ]] 
     [SerializeField] private SplineContainer _splineContainer;
-
     [SerializeField] private float _width;
-
     [SerializeField] private MeshFilter _meshFilter;
 
     //**    ---Variables---    **//
@@ -25,7 +20,10 @@ public class SplineSampler : MonoBehaviour
     //  [[ internal work ]]
     private List<Vector3> _vertsP1;
     private List<Vector3> _vertsP2;
-    
+    private List<Intersection> intersections = new List<Intersection>();
+    List<Vector3> meshVerts = new List<Vector3>();
+    List<int> tris = new List<int>();
+
     //**    ---Properties---    **//
 
     
@@ -48,6 +46,10 @@ public class SplineSampler : MonoBehaviour
     private void Rebuild() {
         GetVerts();
         BuildMesh();
+    }
+
+    public void AddJunction(Intersection intersection) {
+        intersections.Add(intersection);
     }
     
     private void SampleSplineWidth(int splineIndex, float time, out Vector3 p1, out Vector3 p2) {
@@ -81,10 +83,72 @@ public class SplineSampler : MonoBehaviour
         }
     }
 
+    private void ClearMesh() {
+        meshVerts = new List<Vector3>();
+        tris = new List<int>();
+    }
+    
+    private void GetJunctionVerts() {
+        int pointsOffset = meshVerts.Count;
+        Vector3 center = new Vector3();
+        
+        for (int i = 0; i < intersections.Count; i++) {
+            Intersection intersection = intersections[i];
+            int count = 0;
+            List<Vector3> points = new List<Vector3>();
+            foreach (var juntion in intersection.GetJunctions()) {
+                int splineIndex = juntion.splineIndex;
+                float t = juntion.knotIndex == 0 ? 0f : 1f; //max time is 1f, but knot index must be normalized
+                SampleSplineWidth(splineIndex, t, out Vector3 p1, out Vector3 p2);
+                
+                points.Add(p1);
+                points.Add(p2);
+                center += p1;
+                center += p2;
+                count++;
+            }
+
+            center /= points.Count;
+            
+            points.Sort((x, y) => {
+                Vector3 xDir = x - center;
+                Vector3 yDir = y - center;
+
+                float angleA = Vector3.SignedAngle(center.normalized, xDir.normalized, Vector3.up);
+                float angleB = Vector3.SignedAngle(center.normalized, yDir.normalized, Vector3.up);
+
+                if (angleA > angleB) {
+                    return 1;
+                }
+
+                if (angleA < angleB) {
+                    return -1;
+                }
+                else {
+                    return 0;
+                }
+            });
+
+            for (int j = 1; j <= points.Count; j++) {
+                meshVerts.Add(center);
+                meshVerts.Add(points[j - 1]);
+                if (j == points.Count) {
+                    meshVerts.Add(points[0]);
+                }
+                else {
+                    meshVerts.Add(points[j]);
+                }
+
+                tris.Add(pointsOffset + ((j - 1) * 3) + 0);
+                tris.Add(pointsOffset + ((j - 1) * 3) + 1);
+                tris.Add(pointsOffset + ((j - 1) * 3) + 2);
+            }
+        }
+    }
+
     private void BuildMesh() {
+        ClearMesh();
         Mesh m = new Mesh();
-        List<Vector3> verts = new List<Vector3>();
-        List<int> tris = new List<int>();
         int offset = 0;
 
         int length = _vertsP2.Count;
@@ -111,11 +175,14 @@ public class SplineSampler : MonoBehaviour
                 int t5 = offset + 1;
                 int t6 = offset + 0;
                 
-                verts.AddRange(new List<Vector3>{ p1, p2, p3, p4});
+                meshVerts.AddRange(new List<Vector3>{ p1, p2, p3, p4});
                 tris.AddRange(new List<int>{ t1, t2, t3, t4, t5, t6});
             }
         }
-        m.SetVertices(verts);
+
+        GetJunctionVerts();
+        
+        m.SetVertices(meshVerts);
         m.SetTriangles(tris, 0);
         _meshFilter.mesh = m;
     }
