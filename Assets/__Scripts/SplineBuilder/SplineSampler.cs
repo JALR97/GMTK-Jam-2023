@@ -48,10 +48,12 @@ public class SplineSampler : MonoBehaviour
         BuildMesh();
     }
 
-    public void AddJunction(Intersection intersection) {
+    public void AddIntersection(Intersection intersection) {
         intersections.Add(intersection);
     }
-    
+    public void ClearIntersections() {
+        intersections = new List<Intersection>();
+    }
     private void SampleSplineWidth(int splineIndex, float time, out Vector3 p1, out Vector3 p2) {
         float3 position;
         float3 tangent;
@@ -89,11 +91,9 @@ public class SplineSampler : MonoBehaviour
     }
     
     private void GetJunctionVerts() {
-        int pointsOffset = meshVerts.Count;
-        Vector3 center = new Vector3();
-        
         for (int i = 0; i < intersections.Count; i++) {
             Intersection intersection = intersections[i];
+            Vector3 center = new Vector3();
             int count = 0;
             List<Vector3> points = new List<Vector3>();
             foreach (var juntion in intersection.GetJunctions()) {
@@ -128,7 +128,8 @@ public class SplineSampler : MonoBehaviour
                     return 0;
                 }
             });
-
+            
+            int pointsOffset = meshVerts.Count;
             for (int j = 1; j <= points.Count; j++) {
                 meshVerts.Add(center);
                 meshVerts.Add(points[j - 1]);

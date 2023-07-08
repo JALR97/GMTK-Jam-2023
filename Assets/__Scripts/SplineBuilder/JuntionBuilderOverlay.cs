@@ -27,10 +27,29 @@ public class JuntionBuilderOverlay : ToolbarOverlay {
             BuildJunction();
         }
     }
-       
-    public JuntionBuilderOverlay() : base(BuildJunctionButton.Id) {
+    
+    [EditorToolbarElement(Id, typeof(SceneView))]
+    public class ClearJunctionsButton : EditorToolbarButton {
+        public const string Id = "Clear Junctions Button";
+
+        public ClearJunctionsButton() {
+            this.text = "Clear ALL Junctions";
+            this.clicked += OnClick;
+        }
+
+        void OnClick() {
+            ClearJunctions();
+        }
     }
     
+    public JuntionBuilderOverlay() : 
+        base(BuildJunctionButton.Id, ClearJunctionsButton.Id) { }
+
+    private static void ClearJunctions() {
+        SplineContainer container = (SplineContainer)SplineEditorExtension.GetSelection()[0].target;
+        container.GetComponent<SplineSampler>().ClearIntersections();
+    }
+
     private static void BuildJunction() {
         List<SplineEditorExtension.SelectedSplineInfo> selection = SplineEditorExtension.GetSelection();
         Intersection intersection = new Intersection();
@@ -41,7 +60,7 @@ public class JuntionBuilderOverlay : ToolbarOverlay {
             intersection.AddJunction(splineInfo.targetIndex, splineInfo.knotIndex, spline, spline.Knots.ToList()[splineInfo.knotIndex]);
         }
 
-        Selection.activeObject.GetComponent<SplineSampler>().AddJunction(intersection);
+        Selection.activeObject.GetComponent<SplineSampler>().AddIntersection(intersection);
     }
     private void UpdateSelectionInfo() {
         List<SplineEditorExtension.SelectedSplineInfo> infos = SplineEditorExtension.GetSelection();
