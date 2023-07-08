@@ -1,5 +1,7 @@
 using System.Collections.Generic;
+using System.IO;
 using Unity.Mathematics;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.Splines;
 using UnityEngine.UIElements;
@@ -12,15 +14,17 @@ public class SplineSampler : MonoBehaviour
     [SerializeField] private SplineContainer _splineContainer;
     [SerializeField] private float _width;
     [SerializeField] private MeshFilter _meshFilter;
+    //[SerializeField] private MapIntersections_SO BakedIntersections;
 
     //**    ---Variables---    **//
     //  [[ balance control ]] 
+    public int MapId;
     [SerializeField] private int resolution;
     
     //  [[ internal work ]]
     private List<Vector3> _vertsP1;
     private List<Vector3> _vertsP2;
-    private List<Intersection> intersections = new List<Intersection>();
+    [SerializeField]private List<Intersection> intersections = new List<Intersection>();
     List<Vector3> meshVerts = new List<Vector3>();
     List<int> tris = new List<int>();
 
@@ -30,7 +34,7 @@ public class SplineSampler : MonoBehaviour
     //**    ---Functions---    **//
     private void OnEnable() {
         Spline.Changed += OnSplineChanged;
-        GetVerts();
+        Rebuild();
     }
     private void OnDisable() {
         Spline.Changed -= OnSplineChanged;
@@ -38,11 +42,7 @@ public class SplineSampler : MonoBehaviour
     private void OnSplineChanged(Spline arg1, int arg2, SplineModification arg3) {
         Rebuild();
     }
-    
-    private void Update() {
-        GetVerts();
-        BuildMesh();
-    }
+   
     private void Rebuild() {
         GetVerts();
         BuildMesh();
@@ -50,9 +50,11 @@ public class SplineSampler : MonoBehaviour
 
     public void AddIntersection(Intersection intersection) {
         intersections.Add(intersection);
+        Rebuild();
     }
     public void ClearIntersections() {
         intersections = new List<Intersection>();
+        Rebuild();
     }
     private void SampleSplineWidth(int splineIndex, float time, out Vector3 p1, out Vector3 p2) {
         float3 position;

@@ -49,7 +49,6 @@ public class JuntionBuilderOverlay : ToolbarOverlay {
         SplineContainer container = (SplineContainer)SplineEditorExtension.GetSelection()[0].target;
         container.GetComponent<SplineSampler>().ClearIntersections();
     }
-
     private static void BuildJunction() {
         List<SplineEditorExtension.SelectedSplineInfo> selection = SplineEditorExtension.GetSelection();
         Intersection intersection = new Intersection();
