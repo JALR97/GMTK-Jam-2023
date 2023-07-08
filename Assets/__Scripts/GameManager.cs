@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
 //Subscribing to Events:
@@ -30,12 +32,13 @@ public class GameManager : MonoBehaviour {
         GameOver
     }
     //**    ---Components---    **//
-
+    
 
     //**    ---Variables---    **//
     //  [[ balance control ]] 
     
     //  [[ internal work ]] 
+    public HashSet<IUnit> SelectedUnits = new HashSet<IUnit>();
     
     //**    ---Properties---    **//
     
@@ -69,4 +72,32 @@ public class GameManager : MonoBehaviour {
         }
         OnGameStateChange?.Invoke(newState);
     }
+
+    public void Select(IUnit unit) {
+        SelectedUnits.Add(unit);
+        unit.Selected();
+    }
+    public void Deselect(IUnit unit) {
+        SelectedUnits.Remove(unit);
+        unit.Deselected();
+    }
+    public void DeselectAll(){
+        foreach (var unit in SelectedUnits) {
+            unit.Deselected();
+        }
+        SelectedUnits.Clear();
+    }
+    public void MoveCommand() {
+        if (State != GameState.Game) {
+            return;
+        }
+        Ray MovePosition = Camera.main.ScreenPointToRay(Input.mousePosition);
+        if (Physics.Raycast(MovePosition, out var hitInfo)) {
+            foreach (var unit in SelectedUnits) {
+                unit.Command(hitInfo.point);
+            }
+        }
+    }
+
 }
+
