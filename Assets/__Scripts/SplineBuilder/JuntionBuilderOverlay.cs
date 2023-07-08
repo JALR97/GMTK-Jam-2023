@@ -42,14 +42,48 @@ public class JuntionBuilderOverlay : ToolbarOverlay {
         }
     }
     
+    [EditorToolbarElement(Id, typeof(SceneView))]
+    public class BakeIntersectionsButton : EditorToolbarButton {
+        public const string Id = "Bake Intersections Button";
+
+        public BakeIntersectionsButton() {
+            this.text = "Bake";
+            this.clicked += OnClick;
+        }
+
+        void OnClick() {
+            Bake();
+        }
+    }
+    
+    [EditorToolbarElement(Id, typeof(SceneView))]
+    public class LoadBakeButton : EditorToolbarButton {
+        public const string Id = "Load Bake Button";
+
+        public LoadBakeButton() {
+            this.text = "Load Bake";
+            this.clicked += OnClick;
+        }
+
+        void OnClick() {
+            LoadBake();
+        }
+    }
     public JuntionBuilderOverlay() : 
-        base(BuildJunctionButton.Id, ClearJunctionsButton.Id) { }
+        base(BuildJunctionButton.Id, ClearJunctionsButton.Id, BakeIntersectionsButton.Id, LoadBakeButton.Id) { }
 
     private static void ClearJunctions() {
         SplineContainer container = (SplineContainer)SplineEditorExtension.GetSelection()[0].target;
         container.GetComponent<SplineSampler>().ClearIntersections();
     }
-
+    private static void Bake() {
+        SplineContainer container = (SplineContainer)SplineEditorExtension.GetSelection()[0].target;
+        container.GetComponent<SplineSampler>().BakeIntersections();
+    }
+    private static void LoadBake() {
+        SplineContainer container = (SplineContainer)SplineEditorExtension.GetSelection()[0].target;
+        container.GetComponent<SplineSampler>().LoadBake();
+    }
     private static void BuildJunction() {
         List<SplineEditorExtension.SelectedSplineInfo> selection = SplineEditorExtension.GetSelection();
         Intersection intersection = new Intersection();

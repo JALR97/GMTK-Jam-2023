@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Unity.Mathematics;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.Splines;
 using UnityEngine.UIElements;
@@ -12,9 +13,11 @@ public class SplineSampler : MonoBehaviour
     [SerializeField] private SplineContainer _splineContainer;
     [SerializeField] private float _width;
     [SerializeField] private MeshFilter _meshFilter;
+    [SerializeField] private MapIntersections_SO BakedIntersections;
 
     //**    ---Variables---    **//
     //  [[ balance control ]] 
+    public int MapId;
     [SerializeField] private int resolution;
     
     //  [[ internal work ]]
@@ -30,7 +33,7 @@ public class SplineSampler : MonoBehaviour
     //**    ---Functions---    **//
     private void OnEnable() {
         Spline.Changed += OnSplineChanged;
-        GetVerts();
+        Rebuild();
     }
     private void OnDisable() {
         Spline.Changed -= OnSplineChanged;
@@ -38,21 +41,45 @@ public class SplineSampler : MonoBehaviour
     private void OnSplineChanged(Spline arg1, int arg2, SplineModification arg3) {
         Rebuild();
     }
-    
-    private void Update() {
-        GetVerts();
-        BuildMesh();
-    }
+   
     private void Rebuild() {
         GetVerts();
         BuildMesh();
     }
 
+    public void BakeIntersections() {
+        if (intersections.Count == 0) {
+            return;
+        }
+        BakedIntersections = ScriptableObject.CreateInstance<MapIntersections_SO>();
+
+        BakedIntersections.intersections = new Intersection[intersections.Count];
+        for (int i = 0; i < intersections.Count; i++) {
+            BakedIntersections.intersections[i].SaveJunctions_SO();
+        }
+        EditorUtility.SetDirty(BakedIntersections);
+        string path = $"Assets/_Prefabs/Maps/Baked{MapId}.asset";
+        /*AssetDatabase.CreateAsset(BakedIntersections, path);
+        AssetDatabase.SaveAssets();
+        AssetDatabase.Refresh();*/
+    }
+    public void LoadBake() {
+        if (BakedIntersections != null) {
+            Debug.Log("enter bake");
+            foreach (var intersection in BakedIntersections.intersections) {
+                intersection.LoadJunctions_SO();
+                AddIntersection(intersection);
+            }
+        }
+        Rebuild();
+    }
     public void AddIntersection(Intersection intersection) {
         intersections.Add(intersection);
+        Rebuild();
     }
     public void ClearIntersections() {
         intersections = new List<Intersection>();
+        Rebuild();
     }
     private void SampleSplineWidth(int splineIndex, float time, out Vector3 p1, out Vector3 p2) {
         float3 position;
