@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.IO;
 using Unity.Mathematics;
 using UnityEditor;
 using UnityEngine;
@@ -13,7 +14,7 @@ public class SplineSampler : MonoBehaviour
     [SerializeField] private SplineContainer _splineContainer;
     [SerializeField] private float _width;
     [SerializeField] private MeshFilter _meshFilter;
-    [SerializeField] private MapIntersections_SO BakedIntersections;
+    //[SerializeField] private MapIntersections_SO BakedIntersections;
 
     //**    ---Variables---    **//
     //  [[ balance control ]] 
@@ -23,7 +24,7 @@ public class SplineSampler : MonoBehaviour
     //  [[ internal work ]]
     private List<Vector3> _vertsP1;
     private List<Vector3> _vertsP2;
-    private List<Intersection> intersections = new List<Intersection>();
+    [SerializeField]private List<Intersection> intersections = new List<Intersection>();
     List<Vector3> meshVerts = new List<Vector3>();
     List<int> tris = new List<int>();
 
@@ -47,32 +48,6 @@ public class SplineSampler : MonoBehaviour
         BuildMesh();
     }
 
-    public void BakeIntersections() {
-        if (intersections.Count == 0) {
-            return;
-        }
-        BakedIntersections = ScriptableObject.CreateInstance<MapIntersections_SO>();
-
-        BakedIntersections.intersections = new Intersection[intersections.Count];
-        for (int i = 0; i < intersections.Count; i++) {
-            BakedIntersections.intersections[i].SaveJunctions_SO();
-        }
-        EditorUtility.SetDirty(BakedIntersections);
-        string path = $"Assets/_Prefabs/Maps/Baked{MapId}.asset";
-        /*AssetDatabase.CreateAsset(BakedIntersections, path);
-        AssetDatabase.SaveAssets();
-        AssetDatabase.Refresh();*/
-    }
-    public void LoadBake() {
-        if (BakedIntersections != null) {
-            Debug.Log("enter bake");
-            foreach (var intersection in BakedIntersections.intersections) {
-                intersection.LoadJunctions_SO();
-                AddIntersection(intersection);
-            }
-        }
-        Rebuild();
-    }
     public void AddIntersection(Intersection intersection) {
         intersections.Add(intersection);
         Rebuild();
