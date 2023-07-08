@@ -14,7 +14,6 @@ public class SplineSampler : MonoBehaviour
     [SerializeField] private SplineContainer _splineContainer;
     [SerializeField] private float _width;
     [SerializeField] private MeshFilter _meshFilter;
-    //[SerializeField] private MapIntersections_SO BakedIntersections;
 
     //**    ---Variables---    **//
     //  [[ balance control ]] 
