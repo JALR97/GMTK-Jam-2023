@@ -45,7 +45,7 @@ public class Klaud : MonoBehaviour
     public void ViewBroken() {
         copsInRange -= 1;
         if (copsInRange == 0) {
-            timerStart = Time.deltaTime;
+            timerStart = Time.time;
         }
     }
     
