@@ -1,6 +1,5 @@
-﻿using Unity.VisualScripting;
-using UnityEngine;
-    
+﻿using UnityEngine;
+
 public class PlayerInput : MonoBehaviour {
 
     [SerializeField] private Camera _camera;
