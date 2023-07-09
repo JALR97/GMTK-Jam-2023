@@ -34,7 +34,6 @@ public class Klaud : MonoBehaviour
 
     public void Found() {
         copsInRange += 1;
-        Debug.Log($"Found. {copsInRange}");
         if (copsInRange == 1) {
             agent.speed = runSpeed;
             State = KlaudState.RUN;
@@ -45,7 +44,6 @@ public class Klaud : MonoBehaviour
 
     public void ViewBroken() {
         copsInRange -= 1;
-        Debug.Log($"Broken. {copsInRange}");
         if (copsInRange == 0) {
             timerStart = Time.deltaTime;
         }
@@ -72,18 +70,21 @@ public class Klaud : MonoBehaviour
                 if (Time.time >= timerStart + timeToRoam) {
                     State = KlaudState.ROAM;
                     MoveRNode(-1);
+                    agent.speed = roamSpeed;
                 }
                 break;
             case KlaudState.RUN:
-                if (copsInRange == 0 && Time.time >= timerStart + graceViewTime) {
+                if (!outOfView && copsInRange == 0 && Time.time >= timerStart + graceViewTime) {
                     outOfView = true;
                     Model.SetActive(false);
+                    timerStart = Time.time;
                 }
                 //away from cops
                 if (outOfView && Time.time >= timerStart + timeToHide) {
                     State = KlaudState.HIDE;
                     agent.speed = hiddenSpeed;
                     MoveRNode(-1);
+                    timerStart = Time.time;
                 }
                 break;
             case KlaudState.ENGAGE:
