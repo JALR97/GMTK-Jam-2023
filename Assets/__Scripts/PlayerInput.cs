@@ -7,8 +7,10 @@ public class PlayerInput : MonoBehaviour {
     [SerializeField] private RectTransform SelectionBox;
     [SerializeField] private LayerMask UnitLayers;
     [SerializeField] private LayerMask MapLayers;
-
+    [SerializeField] private float DragDelay = 0.1f;
+    
     private Vector2 startMousePosition;
+    private float mouseDownTime;
     
     private void Update() {
         SelectionInputs();
@@ -16,15 +18,38 @@ public class PlayerInput : MonoBehaviour {
     }
     
     private void SelectionInputs() {
+        
         if (Input.GetKeyDown(KeyCode.Mouse0)) {
             SelectionBox.sizeDelta = Vector2.zero;
             SelectionBox.gameObject.SetActive(true);
             startMousePosition = Input.mousePosition;
-        }else if (Input.GetKey(KeyCode.Mouse0)) {
+            mouseDownTime = Time.time;
+
+        }else if (Input.GetKey(KeyCode.Mouse0) && mouseDownTime + DragDelay < Time.time) {
             ResizeSelectionBox();
+            
         }else if (Input.GetKeyUp(KeyCode.Mouse0)) {
             SelectionBox.sizeDelta = Vector2.zero;
             SelectionBox.gameObject.SetActive(false);
+            
+            if (Physics.Raycast(_camera.ScreenPointToRay(Input.mousePosition), out RaycastHit hit, UnitLayers) 
+                && hit.collider.TryGetComponent<IUnit>(out IUnit unit)){
+                if (Input.GetKey(KeyCode.LeftShift)) {
+                    if (GameManager.Instance.isSelected(unit)) {
+                        GameManager.Instance.Deselect(unit);
+                    }
+                    else {
+                        GameManager.Instance.Select(unit);
+                    }
+                }
+                else {
+                    GameManager.Instance.DeselectAll();
+                    GameManager.Instance.Select(unit);
+                }    
+            }else if (mouseDownTime + DragDelay > Time.time) {
+                GameManager.Instance.DeselectAll();
+            }
+            mouseDownTime = 0;
         }
     }
     
@@ -54,10 +79,9 @@ public class PlayerInput : MonoBehaviour {
     private void CommandInputs() {
         if (Input.GetKeyDown(KeyCode.Mouse1)) {
             Ray TargetPosition = _camera.ScreenPointToRay(Input.mousePosition);
-            if (Physics.Raycast(TargetPosition, out var hitInfo)) {
+            if (Physics.Raycast(TargetPosition, out var hitInfo, MapLayers)) {
                 GameManager.Instance.MoveCommand(hitInfo.point);
             }
-            Debug.Log(hitInfo);
         }
     }
 }

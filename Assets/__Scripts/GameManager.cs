@@ -88,13 +88,15 @@ public class GameManager : MonoBehaviour {
         }
         SelectedUnits.Clear();
     }
+    public bool isSelected(IUnit unit) {
+        return SelectedUnits.Contains(unit);
+    }
+    
     public void MoveCommand(Vector3 movePosition) {
         if (State != GameState.Game) {
             return;
         }
-        Debug.Log("Exec Moves");
         foreach (var unit in SelectedUnits) {
-            Debug.Log("one unit Move");
             unit.Command(movePosition);
         }
     }
