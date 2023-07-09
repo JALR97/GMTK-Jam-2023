@@ -4,15 +4,17 @@ using UnityEngine;
 
 public class PlayMucis : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    public AudioSource source;
+    public AudioClip clip;
+
+    private void Awake()
     {
-        
+        source = GetComponent<AudioSource>();
     }
 
-    // Update is called once per frame
-    void Update()
+    void Start()
     {
-        
+        source.Play();
     }
+
 }
