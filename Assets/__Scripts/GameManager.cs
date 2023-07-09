@@ -39,6 +39,7 @@ public class GameManager : MonoBehaviour {
     
     //  [[ internal work ]] 
     public HashSet<IUnit> SelectedUnits = new HashSet<IUnit>();
+    public List<IUnit> AvailableUnits = new List<IUnit>();
     
     //**    ---Properties---    **//
     
@@ -87,15 +88,14 @@ public class GameManager : MonoBehaviour {
         }
         SelectedUnits.Clear();
     }
-    public void MoveCommand() {
+    public void MoveCommand(Vector3 movePosition) {
         if (State != GameState.Game) {
             return;
         }
-        Ray MovePosition = Camera.main.ScreenPointToRay(Input.mousePosition);
-        if (Physics.Raycast(MovePosition, out var hitInfo)) {
-            foreach (var unit in SelectedUnits) {
-                unit.Command(hitInfo.point);
-            }
+        Debug.Log("Exec Moves");
+        foreach (var unit in SelectedUnits) {
+            Debug.Log("one unit Move");
+            unit.Command(movePosition);
         }
     }
 
