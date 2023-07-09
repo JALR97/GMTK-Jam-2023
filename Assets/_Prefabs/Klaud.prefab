@@ -17,7 +17,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &4745527643129979415
 Transform:
   m_ObjectHideFlags: 0
@@ -151,17 +151,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4c822b1ca52d3ac49b0aff275019eec6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  agent: {fileID: 0}
+  agent: {fileID: 736954509165794751}
   navNodes: {fileID: 0}
   State: 0
-  Model: {fileID: 0}
+  Model: {fileID: 4575402985033572633}
   outOfView: 1
-  timeToHide: 10
+  timeToHide: 5
   timeToRoam: 5
   chillTime: 1
-  hiddenSpeed: 0.5
+  hiddenSpeed: 1
   roamSpeed: 3
-  runSpeed: 10
+  runSpeed: 7
   graceViewTime: 2
 --- !u!195 &736954509165794751
 NavMeshAgent:
