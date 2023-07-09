@@ -30,7 +30,7 @@ Transform:
   m_Children:
   - {fileID: 6340689750602640864}
   m_Father: {fileID: 0}
-  m_RootOrder: 5
+  m_RootOrder: 10
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &3928807023804669197
 PrefabInstance:
@@ -43404,6 +43404,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Map
+      objectReference: {fileID: 0}
+    - target: {fileID: 2794128059563188321, guid: 7180a1f7ca3212a45a77d9b389139b45,
+        type: 3}
+      propertyPath: m_Layer
+      value: 7
       objectReference: {fileID: 0}
     - target: {fileID: 2794128059563188321, guid: 7180a1f7ca3212a45a77d9b389139b45,
         type: 3}
