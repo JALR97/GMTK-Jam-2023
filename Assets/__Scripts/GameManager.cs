@@ -56,7 +56,7 @@ public class GameManager : MonoBehaviour {
     }
 
     private void Start() {
-        SwitchState(GameState.MainMenu);
+        SwitchState(GameState.Game);
     }  
     
     public void SwitchState(GameState newState) {

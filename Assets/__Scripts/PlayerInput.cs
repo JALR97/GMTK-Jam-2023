@@ -57,7 +57,7 @@ public class PlayerInput : MonoBehaviour {
             if (Physics.Raycast(TargetPosition, out var hitInfo)) {
                 GameManager.Instance.MoveCommand(hitInfo.point);
             }
-            Debug.Log(hitInfo;
+            Debug.Log(hitInfo);
         }
     }
 }
