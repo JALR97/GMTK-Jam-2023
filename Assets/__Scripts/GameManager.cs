@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
 //Subscribing to Events:
@@ -30,12 +32,14 @@ public class GameManager : MonoBehaviour {
         GameOver
     }
     //**    ---Components---    **//
-
+    
 
     //**    ---Variables---    **//
     //  [[ balance control ]] 
     
     //  [[ internal work ]] 
+    public HashSet<IUnit> SelectedUnits = new HashSet<IUnit>();
+    public List<IUnit> AvailableUnits = new List<IUnit>();
     
     //**    ---Properties---    **//
     
@@ -52,7 +56,7 @@ public class GameManager : MonoBehaviour {
     }
 
     private void Start() {
-        SwitchState(GameState.MainMenu);
+        SwitchState(GameState.Game);
     }  
     
     public void SwitchState(GameState newState) {
@@ -69,4 +73,33 @@ public class GameManager : MonoBehaviour {
         }
         OnGameStateChange?.Invoke(newState);
     }
+
+    public void Select(IUnit unit) {
+        SelectedUnits.Add(unit);
+        unit.Selected();
+    }
+    public void Deselect(IUnit unit) {
+        SelectedUnits.Remove(unit);
+        unit.Deselected();
+    }
+    public void DeselectAll(){
+        foreach (var unit in SelectedUnits) {
+            unit.Deselected();
+        }
+        SelectedUnits.Clear();
+    }
+    public bool isSelected(IUnit unit) {
+        return SelectedUnits.Contains(unit);
+    }
+    
+    public void MoveCommand(Vector3 movePosition) {
+        if (State != GameState.Game) {
+            return;
+        }
+        foreach (var unit in SelectedUnits) {
+            unit.Command(movePosition);
+        }
+    }
+
 }
+
