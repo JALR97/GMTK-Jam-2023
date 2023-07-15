@@ -1,14 +1,5 @@
-using System.Collections.Generic;
-using System.Linq;
-using Unity.VisualScripting;
-using UnityEditor;
-using UnityEditor.Overlays;
-using UnityEditor.Splines;
-using UnityEditor.Toolbars;
-using UnityEngine.UIElements;
-using UnityEngine;
-using UnityEngine.Splines;
 
+/*
 [Overlay(typeof(SceneView), "JunctionBuilder", true)]
 public class JuntionBuilderOverlay : ToolbarOverlay {
     
@@ -68,3 +59,4 @@ public class JuntionBuilderOverlay : ToolbarOverlay {
         }
     }
 }
+*/

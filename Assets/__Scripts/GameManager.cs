@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
-using UnityEditor.Experimental.GraphView;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 //Subscribing to Events:
 /*
@@ -23,7 +23,7 @@ public class GameManager : MonoBehaviour {
     ///Singleton class to manage the game on a high level
     public static GameManager Instance;
     public GameState State;
-
+    public GameObject winUI;
     public static event Action<GameState> OnGameStateChange; 
     public enum GameState {
         MainMenu,
@@ -48,13 +48,19 @@ public class GameManager : MonoBehaviour {
     private void Awake() {
         if (Instance == null) {
             Instance = this;
-            DontDestroyOnLoad(gameObject);
         }
         else {
             Destroy(gameObject);
         }
     }
 
+    public void Reset() {
+        SceneController.LoadScene("Game");
+    }
+
+    public void Win() {
+        winUI.SetActive(true);
+    }
     private void Start() {
         SwitchState(GameState.Game);
     }  

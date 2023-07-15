@@ -25,6 +25,7 @@ public class Klaud : MonoBehaviour
     public float roamSpeed = 3;
     public float runSpeed = 3.5f;
     public float graceViewTime = 2;
+    public float timeToCatch = 5;
     public enum KlaudState {
         ROAM,
         HIDE,
@@ -74,6 +75,9 @@ public class Klaud : MonoBehaviour
                 }
                 break;
             case KlaudState.RUN:
+                if (!outOfView && Time.time >= timerStart + timeToCatch) {
+                    GameManager.Instance.Win();
+                } 
                 if (!outOfView && copsInRange == 0 && Time.time >= timerStart + graceViewTime) {
                     outOfView = true;
                     Model.SetActive(false);
