@@ -8,15 +8,15 @@ public class SceneController : MonoBehaviour
 
     //**    ---Functions---    **//
     //Singleton behavior
-    private void Awake() {
-        if (Instance == null) {
-            Instance = this;
-            DontDestroyOnLoad(gameObject);
-        }
-        else {
-            Destroy(gameObject);
-        }
-    }
+    // private void Awake() {
+    //     if (Instance == null) {
+    //         Instance = this;
+    //         DontDestroyOnLoad(gameObject);
+    //     }
+    //     else {
+    //         Destroy(gameObject);
+    //     }
+    // }
     
     public static void LoadScene(string sceneName){
         SceneManager.LoadScene(sceneName);

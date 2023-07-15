@@ -1,5 +1,3 @@
-using System;
-using Unity.VisualScripting.Antlr3.Runtime;
 using UnityEngine;
 using UnityEngine.AI;
 using Random = UnityEngine.Random;
@@ -14,6 +12,7 @@ public class Klaud : MonoBehaviour
     private float timerStart = 0;
     private int goalNode = -1;
     public bool outOfView = true;
+    private bool captured = false;
 
     private int copsInRange = 0;
     private int copsEngaging = 0;
@@ -30,7 +29,8 @@ public class Klaud : MonoBehaviour
         ROAM,
         HIDE,
         RUN,
-        ENGAGE
+        ENGAGE,
+        DONE
     }
 
     public void Found() {
@@ -38,6 +38,7 @@ public class Klaud : MonoBehaviour
         if (copsInRange == 1) {
             agent.speed = runSpeed;
             State = KlaudState.RUN;
+            timerStart = Time.time;
             outOfView = false;
             Model.SetActive(true);
         }
@@ -60,7 +61,12 @@ public class Klaud : MonoBehaviour
     
 
     private void Update() {
-        Evaluate();
+        if (!captured) {
+            Evaluate();
+        }
+        else {
+            agent.speed = 0;
+        }
     }
     public void Evaluate(){
         switch (State) {
@@ -75,21 +81,31 @@ public class Klaud : MonoBehaviour
                 }
                 break;
             case KlaudState.RUN:
-                if (!outOfView && Time.time >= timerStart + timeToCatch) {
-                    GameManager.Instance.Win();
-                } 
-                if (!outOfView && copsInRange == 0 && Time.time >= timerStart + graceViewTime) {
-                    outOfView = true;
-                    Model.SetActive(false);
-                    timerStart = Time.time;
-                }
-                //away from cops
                 if (outOfView && Time.time >= timerStart + timeToHide) {
                     State = KlaudState.HIDE;
                     agent.speed = hiddenSpeed;
                     MoveRNode(-1);
                     timerStart = Time.time;
                 }
+
+                if (!outOfView && copsInRange > 0) {
+                    Debug.Log($"acab {Time.time - timerStart}");
+                }
+
+                if (!outOfView && copsInRange == 0 && Time.time >= timerStart + graceViewTime) {
+                    outOfView = true;
+                    Model.SetActive(false);
+                    timerStart = Time.time;
+                }
+                else if (!outOfView && copsInRange > 0 && Time.time >= timerStart + timeToCatch) {
+                    Debug.Log("Jhonny 5O");
+                    GameManager.Instance.Win();
+                    State = KlaudState.DONE;
+                    captured = true;
+                }
+                 
+                //away from cops
+                
                 break;
             case KlaudState.ENGAGE:
                 

@@ -54,7 +54,7 @@ SphereCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Radius: 0.25
+  m_Radius: 0.15
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &6298056572265638949
 MonoBehaviour:
@@ -74,12 +74,13 @@ MonoBehaviour:
   Model: {fileID: 3701127826529090887}
   outOfView: 1
   timeToHide: 5
-  timeToRoam: 5
+  timeToRoam: 3
   chillTime: 1
-  hiddenSpeed: 0.1
-  roamSpeed: 0.5
-  runSpeed: 2
-  graceViewTime: 3
+  hiddenSpeed: 2
+  roamSpeed: 6
+  runSpeed: 9
+  graceViewTime: 1
+  timeToCatch: 3
 --- !u!195 &736954509165794751
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -93,7 +94,7 @@ NavMeshAgent:
   m_Speed: 3.5
   m_Acceleration: 9
   avoidancePriority: 50
-  m_AngularSpeed: 120
+  m_AngularSpeed: 300
   m_StoppingDistance: 0
   m_AutoTraverseOffMeshLink: 1
   m_AutoBraking: 1
@@ -184,6 +185,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Model
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 6b3981fce3d6dce4fb2ddc76f40fa989,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

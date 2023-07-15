@@ -60,9 +60,12 @@ public class GameManager : MonoBehaviour {
 
     public void Win() {
         winUI.SetActive(true);
+        Debug.Log("Win?");
+        // Time.timeScale = 0;
     }
     private void Start() {
         SwitchState(GameState.Game);
+        winUI.SetActive(false);
     }  
     
     public void SwitchState(GameState newState) {

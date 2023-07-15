@@ -6,7 +6,7 @@ public class PlayerInput : MonoBehaviour {
     [SerializeField] private RectTransform SelectionBox;
     [SerializeField] private LayerMask UnitLayers;
     [SerializeField] private LayerMask MapLayers;
-    [SerializeField] private float DragDelay = 0.1f;
+    [SerializeField] private float DragDelay = 0.05f;
     
     private Vector2 startMousePosition;
     private float mouseDownTime;
