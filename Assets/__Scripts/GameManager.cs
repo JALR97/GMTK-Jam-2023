@@ -19,6 +19,8 @@ using UnityEngine.SceneManagement;
     }
 */
 
+
+
 public class GameManager : MonoBehaviour {
     ///Singleton class to manage the game on a high level
     public static GameManager Instance;
